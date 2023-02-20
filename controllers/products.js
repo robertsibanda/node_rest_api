@@ -1,7 +1,8 @@
 const Product = require("../models/Product");
 
 const asyncWrapper = async (fn) => {
-    //you can write an async warpper fucntion to wrap all function to avoid repetition
+    //you can write an async warpper function to wrap all function 
+    //to avoid repetition of the try-catch block
 }
 
 const getAllProducts = async (req, res) => {
