@@ -1,6 +1,2 @@
-const notFound = (req, res)=> {
-    //console.log(req);
-    res.status(404).send("Route not found");
-}
-
-module.exports = notFound;
+const NotFound = (req, res) => res.status(400).json({error : "Route not found"})
+module.exports = NotFound;
