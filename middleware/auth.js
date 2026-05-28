@@ -1,9 +1,21 @@
+/**
+ * Authentication middleware.
+ * @module middleware/auth
+ */
+
 const jwt = require('jsonwebtoken');
 
-// TODO: move secrets to env variables
 const JWT_SECRET = 'jwtSecret';
 const REFRESH_TOKEN = 'jwtsecret3';
 
+/**
+ * Middleware that verifies the JWT Bearer token from the Authorization header.
+ * Attaches decoded user payload to `req.user`.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next middleware function.
+ * @returns {void}
+ */
 const authenticationMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 

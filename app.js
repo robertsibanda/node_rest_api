@@ -1,10 +1,14 @@
+/**
+ * Application entry point.
+ * @module app
+ */
+
 require('express-async-errors');
 const connectDB = require("./db/connect");
 const express = require('express');
 
 const CourseRouter = require('./routes/coursesRoutes');
 const NotFound = require("./middleware/not-found");
-//const passport = require("passport")
 
 const Mainrouter = require('./routes/mainRoutes');
 const app = express();
@@ -25,6 +29,11 @@ app.use('/api/v1/', Mainrouter);
 
 app.use(NotFound);
 
+/**
+ * Starts the Express server.
+ * Connects to the database first, then listens on port 3000.
+ * @returns {Promise<void>}
+ */
 const start = async () => {
     try {
         await connectDB();
@@ -36,4 +45,7 @@ const start = async () => {
     }
 }
 
-start();
+if (process.env.NODE_ENV !== 'test') {
+  start();
+}
+module.exports = app;

@@ -1,5 +1,11 @@
+/**
+ * User model.
+ * @module models/users
+ */
+
 const mongoose = require('mongoose');
 
+/** @type {mongoose.Schema} */
 const UserSchema = new mongoose.Schema({
     username : {
         type : String,

@@ -1,6 +1,12 @@
+/**
+ * Topic model.
+ * @module models/topic
+ */
+
 const mongoose = require("mongoose");
 
-TopicSchema = new mongoose.Schema({
+/** @type {mongoose.Schema} */
+const TopicSchema = new mongoose.Schema({
     course : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'Course'
@@ -15,13 +21,11 @@ TopicSchema = new mongoose.Schema({
     description : {
         type : String, 
         default : 'Topic Description'
-        //required : [true, 'description cannot be empty']
     },
 
     marks : {
         type : Number,
         default: 0
-        //rqeuired : true,
     },
 
     medialinks  : {

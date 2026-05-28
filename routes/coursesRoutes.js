@@ -1,3 +1,8 @@
+/**
+ * Course CRUD routes.
+ * @module routes/coursesRoutes
+ */
+
 const express = require('express');
 const router = express.Router();
 const authenticationMiddleware = require("../middleware/auth");
@@ -5,6 +10,13 @@ const authenticationMiddleware = require("../middleware/auth");
 const Course = require("../models/course");
 const Topic = require("../models/topic");
 
+/**
+ * Creates a new course (staff-only).
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next middleware function.
+ * @returns {Promise<void>}
+ */
 const create = async (req, res, next) => {
 
   if (!req.user.staff) return res.json({ error: 'permission denied' });
@@ -33,7 +45,13 @@ const create = async (req, res, next) => {
 
 }
 
-
+/**
+ * Edits an existing course (instructor-only).
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next middleware function.
+ * @returns {Promise<void>}
+ */
 const edit = async (req, res, next) => {
 
   const { username } = req.user;
@@ -42,15 +60,12 @@ const edit = async (req, res, next) => {
     .then(async course => {
       if (!course) return res.json({ error: "Course does not exists" });
 
-      //check if the new name is already taken 
-
       const courseExists = await Course.findOne({ "name": req.body.name })
         .then(async existingCourse => {
 
           if (existingCourse) return res.json({ error: "Course already exists" });
           const { instructor } = course;
 
-          //only the instrutor is allowed to edit the course info
           if (username !== instructor.username) return res.json({ error: "Permission denied" });
           const NewCourse = await Course.findOneAndUpdate(
             { _id: id },
@@ -68,6 +83,12 @@ const edit = async (req, res, next) => {
     .catch(error => res.json({ failed: error }))
 }
 
+/**
+ * Retrieves a single course by ID.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @returns {Promise<void>}
+ */
 const getOne = async (req, res) => {
 
   const { id } = req.params;
@@ -75,19 +96,22 @@ const getOne = async (req, res) => {
     .then((course) => {
       if (!course) return res.json({ error: "Course not found" });
 
-      //get the topics from that course also
-
       res.json({ course });
     })
     .catch((error) => res.status(400).json({ failed: error }));
 }
 
-
+/**
+ * Deletes a course and its associated topics.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next middleware function.
+ * @returns {Promise<void>}
+ */
 const deleteCourse = async (req, res, next) => {
 
   const { id } = req.params;
 
-  //delete course first
   const myCourse = await Course.findOneAndDelete({ _id: id })
     .then(async (course) => {
       if (!course) return res.json({ error: "Course not found" });
@@ -105,6 +129,12 @@ const deleteCourse = async (req, res, next) => {
     .catch((error) => res.json({ failed: error.message }));
 }
 
+/**
+ * Retrieves all courses.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @returns {Promise<void>}
+ */
 const getAll = async (req, res) => {
   const Courses = await Course.find();
   res.json({ courses: Courses });

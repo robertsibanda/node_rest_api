@@ -1,5 +1,11 @@
+/**
+ * Student model.
+ * @module models/student
+ */
+
 const mongoose = require('mongoose');
 
+/** @type {mongoose.Schema} */
 const StudentSchema = new mongoose.Schema({
     user : {
         type : mongoose.Schema.Types.ObjectId,
@@ -10,7 +16,7 @@ const StudentSchema = new mongoose.Schema({
     },
 
     progress : [
-        //course. topic, programm
+
     ],
 
     contacts : [

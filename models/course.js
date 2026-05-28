@@ -1,6 +1,12 @@
+/**
+ * Course model.
+ * @module models/course
+ */
+
 const mongoose = require("mongoose");
 
-courseSchema = new mongoose.Schema({
+/** @type {mongoose.Schema} */
+const courseSchema = new mongoose.Schema({
     name :  {
         type : String,
         required :  [true, 'Course name is required'],

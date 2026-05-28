@@ -1,27 +1,32 @@
+/**
+ * Main authentication and user routes.
+ * @module routes/mainRoutes
+ */
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Token = require("../models/tokens");
 
-//require data models
 const Users = require('../models/users');
-//end models
 
 const bcrypt = require("bcrypt");
 
 const authenticationMiddleware = require("../middleware/auth");
 
-// TODO: move secrets to env variables
 const JWT_SECRET = 'jwtSecret';
 const REFRESH_TOKEN = 'jwtsecret3';
 
-
+/**
+ * Registers a new user.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @returns {Promise<void>}
+ */
 const signup = async (req, res) => {
   const { username, password } = req.body;
-  //
   if (!username || !password) return res.status(400).json({ error: "please provide email and password" });
 
-  //conflict on username
   const userexists = await Users.findOne({ username: username })
 
     .then(async (user) => {
@@ -32,18 +37,21 @@ const signup = async (req, res) => {
         .then(() => res.status(200).json({ message: `user created ${username}` }))
     })
     .catch(err => {
-      res.json({ failed: error });
+      res.json({ failed: err.message });
     })
-
-
-  //create a hashed password to store in database
 
 }
 
+/**
+ * Authenticates a user and returns JWT tokens.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next middleware function.
+ * @returns {Promise<void>}
+ */
 const login = async (req, res, next) => {
   const { username, password } = req.body;
 
-  //auth required both username and password from request body
   if (!username || !password)
     return res
       .status(400)
@@ -51,11 +59,9 @@ const login = async (req, res, next) => {
 
   await Users.findOne({ username: username })
 
-    //handle the data from the database
     .then(async (user) => {
       if (!user) return res.status(400).json({ error: "user not found" });
 
-      //validate the password
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) return res.json({ error: "Wrong credenatisls" });
       return user;
@@ -65,10 +71,18 @@ const login = async (req, res, next) => {
 
 
 }
+
+/**
+ * Generates JWT access and refresh tokens for a user.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {Object} user - User document from the database.
+ * @param {string} username - Username string.
+ * @returns {Promise<void>}
+ */
 const GenerteToken = async (req, res, user, username) => {
 
   const { id, admin, staff } = user;
-  //const admin = true;
   const token = await jwt.sign({ id, username, admin, staff }, JWT_SECRET, {
     expiresIn: "1d",
   });
@@ -81,16 +95,18 @@ const GenerteToken = async (req, res, user, username) => {
   );
 
   await Token.findOne({ user: id })
-    .then(async (token) => {
-      if (!token)
-        savedToken = await Token.create({
+    .then(async (existingToken) => {
+      if (!existingToken) {
+        await Token.create({
           user: id,
-          token: refreshToken,
+          token: NrefreshToken,
         });
-      const savedToken = await Token.findOneAndUpdate(
-        { user: id },
-        { token: NrefreshToken }
-      );
+      } else {
+        await Token.findOneAndUpdate(
+          { user: id },
+          { token: NrefreshToken }
+        );
+      }
     })
     .then(() => {
       res.set("authorization", `Bearer ${token}`);
@@ -106,6 +122,14 @@ const GenerteToken = async (req, res, user, username) => {
     });
 
 }
+
+/**
+ * Returns a dashboard message with a random lucky number.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next middleware function.
+ * @returns {void}
+ */
 const dashboard = async (req, res, next) => {
 
   const luckyNumber = Math.floor(Math.random() * 100);
@@ -113,6 +137,12 @@ const dashboard = async (req, res, next) => {
 
 }
 
+/**
+ * Refreshes an expired access token using a valid refresh token.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @returns {Promise<void>}
+ */
 const refreshToken = async (req, res) => {
 
   const { token } = req.body;
@@ -133,7 +163,6 @@ const refreshToken = async (req, res) => {
         await GenerteToken(req, res, data, username);
       })
       .catch(error => {
-        //console.log(error)
         res.status(200).json({ message: error })
       });
 

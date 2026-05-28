@@ -1,20 +1,25 @@
 {
-  "name": "node-auth",
+  "name": "node-rest-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "A RESTful API for course management with authentication",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "test": "jest --forceExit --detectOpenHandles"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.0.0",
-    "dotenv": "^16.0.3",
     "bcrypt": "^5.1.0",
-    "jsonwebtoken": "^9.0.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "joi": "^17.9.0",
-    "express-async-errors": "^3.1.1"
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.0"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }
