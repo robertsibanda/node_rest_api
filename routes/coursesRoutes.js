@@ -4,7 +4,6 @@ const authenticationMiddleware = require("../middleware/auth");
 
 const Course = require("../models/course");
 const Topic = require("../models/topic");
-const { isExists } = require('date-fns');
 
 const create = async (req, res, next) => {
 

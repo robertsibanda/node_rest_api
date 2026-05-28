@@ -1,5 +1,5 @@
+require('express-async-errors');
 const connectDB = require("./db/connect");
-const jwt = require('jsonwebtoken');
 const express = require('express');
 
 const CourseRouter = require('./routes/coursesRoutes');
@@ -32,7 +32,7 @@ const start = async () => {
             console.log('server running @ 3000');
         });
     } catch (error) {
-
+        console.log(error);
     }
 }
 

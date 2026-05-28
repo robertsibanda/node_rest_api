@@ -5,18 +5,15 @@ const Token = require("../models/tokens");
 
 //require data models
 const Users = require('../models/users');
-const course = require("../models/course")
-const topic = require("../models/topic")
 //end models
 
 const bcrypt = require("bcrypt");
 
 const authenticationMiddleware = require("../middleware/auth");
-const users = require('../models/users');
 
-JWT_SECRET = 'jwtSecret';
-ACCESS_TOKEN = 'jwtSecret2';
-REFRESH_TOKEN = 'jwtsecret3';
+// TODO: move secrets to env variables
+const JWT_SECRET = 'jwtSecret';
+const REFRESH_TOKEN = 'jwtsecret3';
 
 
 const signup = async (req, res) => {
@@ -33,8 +30,6 @@ const signup = async (req, res) => {
       const hashdPassword = await bcrypt.hash(password, 10);
       await Users.create({ "username": username, "password": hashdPassword })
         .then(() => res.status(200).json({ message: `user created ${username}` }))
-      d
-
     })
     .catch(err => {
       res.json({ failed: error });
@@ -85,7 +80,7 @@ const GenerteToken = async (req, res, user, username) => {
     }
   );
 
-  const TokenExists = await Token.findOne({ user: id })
+  await Token.findOne({ user: id })
     .then(async (token) => {
       if (!token)
         savedToken = await Token.create({
@@ -124,7 +119,7 @@ const refreshToken = async (req, res) => {
 
   if (!token) return res.status(401).json({ error: "No token supplied" });
 
-  const tokenVerified = await jwt.verify(token, REFRESH_TOKEN, async (error, data) => {
+  await jwt.verify(token, REFRESH_TOKEN, async (error, data) => {
     if (error) res.status(401).json({ message: error })
     if (!data) return res.status(401).json({ error: "Invalid refresh token" });
     const { id, username, admin, staff } = data;
@@ -155,7 +150,7 @@ router.route('/dashboard')
   .get(authenticationMiddleware, dashboard);
 
 router.route('/login')
-  .post(login, GenerteToken);
+  .post(login);
 
 router.route('/token')
   .post(refreshToken)

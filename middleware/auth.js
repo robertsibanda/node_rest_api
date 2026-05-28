@@ -1,19 +1,8 @@
 const jwt = require('jsonwebtoken');
-const Users = require('../models/users');
 
-
-JWT_SECRET = 'jwtSecret';
-ACCESS_TOKEN = 'jwtSecret2';
-REFRESH_TOKEN = 'jwtsecret3';
-
-
-class CustomAuthenticationError extends Error {
-  constructor(message, statusCode) {
-    super(message)
-    this.statusCode = statusCode;
-  }
-}
-
+// TODO: move secrets to env variables
+const JWT_SECRET = 'jwtSecret';
+const REFRESH_TOKEN = 'jwtsecret3';
 
 const authenticationMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -24,7 +13,7 @@ const authenticationMiddleware = async (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
 
-  const decodFunc = jwt.verify(token, JWT_SECRET, async (error, decoded) => {
+  jwt.verify(token, JWT_SECRET, async (error, decoded) => {
     if (error)
       return res.status(401).json({
         error1: "not authorized to access this route",

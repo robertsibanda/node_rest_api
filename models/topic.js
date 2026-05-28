@@ -1,9 +1,10 @@
-const { string } = require("joi");
 const mongoose = require("mongoose");
-const course = require('./course')
 
 TopicSchema = new mongoose.Schema({
-    course ,
+    course : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'Course'
+    },
     id : String, 
     name : {
         type : String,

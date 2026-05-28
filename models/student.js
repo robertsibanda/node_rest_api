@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
-const user = require('./users')
 
 const StudentSchema = new mongoose.Schema({
-    user,
+    user : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'Users'
+    },
     courses :  {
 
     },
